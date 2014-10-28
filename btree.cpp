@@ -78,47 +78,76 @@ typename btree<T>::const_iterator btree<T>::find(const T& elem) const {
 */
 template <typename T>
 std::pair<typename btree<T>::iterator, bool> btree<T>::insert(const T& elem) {
-  return recursiveInsert(root, elem);
+  return recursiveInsert(&root, &root, elem);
 }
 
 template <typename T>
-std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node &node, const T& elem) {
-  
+std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *node, Node *parent, const T& elem) {
+
   //Iterate over node elements
-  for (auto it = node.elements.begin(); it != node.elements.end(); ++it) {
+  for (auto it = node->elements.begin(); it != node->elements.end(); ++it) {
+    //Create boolean for final iteration special case
+    bool finalIteration = false;
+
+    if (it == --node->elements.end())
+      finalIteration = true;
+
+    //cout << &node.elements.begin() << " | " << &node.elements.end() << endl;
+
     //Keep traversing while elem < it's element and not equal to it
-    if (it->first == elem) {
+    if (elem == it->first) {
       //Exact match found, return pair
       return pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), false);
     }
-    else if (it->first >  elem) {
-      //We can insert the element at this location in this node
-      if (node.elements.size() < maxElements) {
-        ;
+    //If elem is less than element or this is the last element, we must insert or expand here
+    else if (elem < it->first || finalIteration) {
+
+      //We can insert the element at this location in this node if there is space
+      if (node->elements.size() < maxElements) {
+        //Create new element
+        Element e;
+        e.value = elem;
+        e.leftChild = nullptr;
+        e.rightChild = nullptr;
+        node->elements.insert(pair<T, Element>(elem, e));
+
+        return pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), true);
       }
-      //Recursively analyse the left child
+      //Otherwise, recursively analyse the left or right child
       else {
-        recursiveInsert(*it->second.leftChild, elem);
+        Node *child = it->second.leftChild;
+        
+        //Select right child for the last element if elem is bigger
+        if (finalIteration && elem > it->first)
+          child = it->second.rightChild;
+
+        //If child is empty node
+        if (child == nullptr) {
+          //Create new node
+          child = new Node(parent);
+
+          //Set pointers to child node
+          if (finalIteration && elem > it->first)
+            it->second.rightChild = child;
+          else
+            it->second.leftChild = child;
+        }
+        
+        return recursiveInsert(child, node, elem);
       }
     }
   }
 
-  //We have iterated over entire node and elem was larger than all values
-  //We can insert the element at this location in this node
-  if (node.elements.size() < maxElements) {
-    //Create new element
-    Element e;
-    e.value = elem;
-    e.leftChild = nullptr;
-    e.rightChild = nullptr;
-    node.elements.insert(pair<T, Element>(elem, e));
+  //No elements in the node, we must add the new element
+  //Create new element
+  Element e;
+  e.value = elem;
+  e.leftChild = nullptr;
+  e.rightChild = nullptr;
+  node->elements.insert(pair<T, Element>(elem, e));
 
-    return pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), true);
-  }
-  //Recursively analyse the right child
-  else {
-    recursiveInsert(*node.elements.rbegin()->second.rightChild, elem);
-  }
+  return pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), true);
+
 }
 
 template <typename T>

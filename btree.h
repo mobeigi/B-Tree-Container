@@ -204,7 +204,7 @@ class btree {
   * Each node is aware of its parent node to simplify later algorithms.
   */
   struct Node {
-    Node(Node* p = nullptr) : parent(p) {}
+    Node(Node* p = nullptr) : parent(p), elements(std::map<T, Element>()) {}
     Node *parent;
     std::map<T, Element> elements;
   };
@@ -226,7 +226,7 @@ class btree {
 
   //Helper functions
   void copyBTree(Node *source, Node *dest);
-  std::pair<typename btree<T>::iterator, bool> recursiveInsert(Node &node, const T& elem);
+  std::pair<typename btree<T>::iterator, bool> recursiveInsert(Node *node, Node *parent, const T& elem);
 };
 
 
