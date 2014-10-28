@@ -41,7 +41,7 @@ class btree {
    * @param maxNodeElems the maximum number of elements
    *        that can be stored in each B-Tree node
    */
-  btree(size_t maxNodeElems = 40);
+   btree(size_t maxNodeElems = 40) : maxElements(maxNodeElems) {};
 
   /**
    * The copy constructor and  assignment operator.
@@ -194,7 +194,7 @@ class btree {
     */
   ~btree();
   
-private:
+//private:
   
   struct Element;
 
@@ -214,7 +214,7 @@ private:
   * Each element also has a left and right child node which have value 'nullptr' to indicate no child.
   */
   struct Element {
-    Element(Node *left = nullptr, Node *right = nullptr) : left(left), right(right) {}
+    Element(Node *left = nullptr, Node *right = nullptr) : leftChild(left), rightChild(right) {}
     T value;
     Node *leftChild;
     Node *rightChild;
@@ -226,6 +226,7 @@ private:
 
   //Helper functions
   void copyBTree(Node *source, Node *dest);
+  std::pair<typename btree<T>::iterator, bool> recursiveInsert(Node &node, const T& elem);
 };
 
 
