@@ -25,12 +25,11 @@ public:
   typedef T*								pointer;
   typedef T&								reference;
 
-
   bool operator==(const btree_iterator& other) const;
-  bool operator!=(const btree_iterator& other) const
-  {
+  bool operator!=(const btree_iterator& other) const {
     return !operator==(other);
   }
+
   reference operator*() const;
   pointer operator->() const { return &(operator*()); }
   btree_iterator<T>& operator++();
@@ -38,21 +37,25 @@ public:
   btree_iterator<T>& operator--();
   btree_iterator<T>& operator--(int);
   btree_iterator<T>& operator=(const btree_iterator<T>& rhs);
+
   btree_iterator() {};
   btree_iterator(typename btree<T>::Node *n,
-    typename std::map<T, typename btree<T>::Element>::iterator e)
-    : node(n), elem(e) {}
+    typename std::map<T, typename btree<T>::Element>::iterator it)
+    : node(n), it(it) {}
 
 private:
   typename btree<T>::Node *node;
-  typename std::map<T, typename btree<T>::Element>::iterator elem;
-  void recur_up_right(typename btree<T>::Node*,
+  typename std::map<T, typename btree<T>::Element>::iterator it;
+
+  //Helper functions
+  void forward_traverse_down(typename btree<T>::Node*,
     typename std::map<T, typename btree<T>::Element>::iterator&);
-  void recur_down_left(typename btree<T>::Node*,
+  void forward_traverse_up(typename btree<T>::Node*,
     typename std::map<T, typename btree<T>::Element>::iterator&);
-  void recur_down_right(typename btree<T>::Node*,
+  
+  void reverse_traverse_down(typename btree<T>::Node*,
     typename std::map<T, typename btree<T>::Element>::iterator&);
-  void recur_up_left(typename btree<T>::Node*,
+  void reverse_traverse_up(typename btree<T>::Node*,
     typename std::map<T, typename btree<T>::Element>::iterator&);
 };
 
@@ -67,15 +70,15 @@ public:
 
 
   bool operator==(const const_btree_iterator& other) const;
-  bool operator!=(const const_btree_iterator& other) const
-  {
+  bool operator!=(const const_btree_iterator& other) const {
     return !operator==(other);
   }
+
   bool operator==(const btree_iterator<T>& other) const;
-  bool operator!=(const btree_iterator<T>& other) const
-  {
+  bool operator!=(const btree_iterator<T>& other) const {
     return !operator==(other);
   }
+
   reference operator*() const;
   pointer operator->() const { return &(operator*()); }
   const_btree_iterator& operator++();
@@ -84,24 +87,26 @@ public:
   const_btree_iterator& operator=(const btree_iterator<T>&);
   const_btree_iterator& operator--();
   const_btree_iterator& operator--(int);
+
   const_btree_iterator() {};
   const_btree_iterator(const typename btree<T>::Node *n,
-    typename std::map<T, typename btree<T>::Element>::const_iterator e)
-    : node(n), elem(e) {}
+    typename std::map<T, typename btree<T>::Element>::const_iterator it)
+    : node(n), it(it) {}
 
 private:
   const typename btree<T>::Node *node;
-  typename std::map<T, typename btree<T>::Element>::const_iterator elem;
-  void recur_up_right(const typename btree<T>::Node*,
+  typename std::map<T, typename btree<T>::Element>::const_iterator it;
+
+  //Helper functions
+  void forward_traverse_down(const typename btree<T>::Node*,
     typename std::map<T, typename btree<T>::Element>::const_iterator&);
-  void recur_down_left(const typename btree<T>::Node*,
-    typename std::map<T, typename btree<T>::Element>::const_iterator&);
-  void recur_down_right(const typename btree<T>::Node*,
-    typename std::map<T, typename btree<T>::Element>::const_iterator&);
-  void recur_up_left(const typename btree<T>::Node*,
+  void forward_traverse_up(const typename btree<T>::Node*,
     typename std::map<T, typename btree<T>::Element>::const_iterator&);
 
-
+  void reverse_traverse_down(const typename btree<T>::Node*,
+    typename std::map<T, typename btree<T>::Element>::const_iterator&);
+  void reverse_traverse_up(const typename btree<T>::Node*,
+    typename std::map<T, typename btree<T>::Element>::const_iterator&);
 };
 
 #include "btree_iterator.cpp"

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "btree.h"
+#include <vector>
 
 using namespace std;
 
@@ -11,11 +12,13 @@ int main() {
   b.insert(1);
 
   b.insert(12);
+
   
   for (auto it = b.root.elements.begin(); it != b.root.elements.end(); ++it) {
     cout << it->first << endl;
   }
 
+ 
 
   //end
   cin.ignore(2);

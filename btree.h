@@ -113,11 +113,11 @@ class btree {
   friend class btree_iterator<T>;
   friend class const_btree_iterator<T>;
 
-  //Type def iterator types
+  //Typedef iterator types
   typedef btree_iterator<T> iterator;
   typedef const_btree_iterator<T> const_iterator;
-  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
   typedef std::reverse_iterator<iterator> reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
   iterator begin();
   iterator end();
@@ -214,7 +214,7 @@ class btree {
   * Each element also has a left and right child node which have value 'nullptr' to indicate no child.
   */
   struct Element {
-    Element(Node *left = nullptr, Node *right = nullptr) : leftChild(left), rightChild(right) {}
+    Element(T val = T(), Node *left = nullptr, Node *right = nullptr) : value(val), leftChild(left), rightChild(right) {}
     T value;
     Node *leftChild;
     Node *rightChild;

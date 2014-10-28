@@ -6,6 +6,7 @@
 
 //TEMP!!!!! remove after
 #include "btree.h"
+#include <list>
 
 /*
 * Copy Semantics
@@ -55,9 +56,13 @@ btree<T>& btree<T>::operator=(btree<T>&& rhs) {
   return b;
 }
 
+/*
+* Print out tree values in breadth-first (level) order.
+* Assumes << operator is implemented on type T
+*/
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const btree<T>& tree) {
-
+  //IMPLEMENT USING ITERATORS
 }
 
 template <typename T>
@@ -75,6 +80,8 @@ typename btree<T>::const_iterator btree<T>::find(const T& elem) const {
 *
 * Returns: A pair consisting of an iterator positioned at the element inserted and a boolean indicating the 
 * success of insertion.
+*
+* TODO: Ensure proper iterations are returned in pairs
 */
 template <typename T>
 std::pair<typename btree<T>::iterator, bool> btree<T>::insert(const T& elem) {
@@ -92,8 +99,6 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
     if (it == --node->elements.end())
       finalIteration = true;
 
-    //cout << &node.elements.begin() << " | " << &node.elements.end() << endl;
-
     //Keep traversing while elem < it's element and not equal to it
     if (elem == it->first) {
       //Exact match found, return pair
@@ -105,10 +110,7 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
       //We can insert the element at this location in this node if there is space
       if (node->elements.size() < maxElements) {
         //Create new element
-        Element e;
-        e.value = elem;
-        e.leftChild = nullptr;
-        e.rightChild = nullptr;
+        Element e(elem);
         node->elements.insert(pair<T, Element>(elem, e));
 
         return pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), true);
@@ -140,10 +142,7 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
 
   //No elements in the node, we must add the new element
   //Create new element
-  Element e;
-  e.value = elem;
-  e.leftChild = nullptr;
-  e.rightChild = nullptr;
+  Element e(elem);
   node->elements.insert(pair<T, Element>(elem, e));
 
   return pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), true);
