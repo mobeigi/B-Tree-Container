@@ -84,11 +84,11 @@ typename btree<T>::const_iterator btree<T>::find(const T& elem) const {
 */
 template <typename T>
 std::pair<typename btree<T>::iterator, bool> btree<T>::insert(const T& elem) {
-  return recursiveInsert(&root, &root, elem);
+  return recursiveInsert(&root, elem);
 }
 
 template <typename T>
-std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *node, Node *parent, const T& elem) {
+std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *node, const T& elem) {
 
   //Iterate over node elements
   for (auto it = node->elements.begin(); it != node->elements.end(); ++it) {
@@ -127,7 +127,7 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
         //If child is empty node
         if (child == nullptr) {
           //Create new node
-          child = new Node(parent);
+          child = new Node(node);
 
           //Set pointers to child node
           if (finalIteration && elem > it->first)
@@ -136,7 +136,8 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
             it->second.leftChild = child;
         }
 
-        return recursiveInsert(child, node, elem);
+        //We recursively insert searching the child and assigning the parent child to any newely created nodes
+        return recursiveInsert(child, elem);
       }
     }
   }
@@ -185,6 +186,48 @@ typename btree<T>::iterator btree<T>::begin() {
 template <typename T>
 typename btree<T>::const_iterator btree<T>::begin() const {
 
+  //Set iterator to roots first element
+  typename std::map<T, typename btree<T>::Element>::const_btree_iterator it = root.elements.begin();
+
+  //If empty root node or first element has no left child
+  if (it == root.elements.end() || it->second.leftChild == nullptr) {
+
+    //Return iterator pointing to root node
+    const_btree_iterator<T> bit(&root, it);
+    return bit;
+  }
+  //Otherwise, a left child exists
+  else {
+    Node *p = it->second.leftChild;
+
+    //Find the left most whild
+    while (it->second.leftChild != nullptr) {
+      p = it->second.leftChild;
+      it = p->elements.begin();
+    }
+
+    //Return iterator to lowest value element
+    const_btree_iterator<T> bit(p, it);
+    return bit;
+  }
+}
+
+/*
+* end()
+*/
+
+template <typename T>
+typename btree<T>::iterator btree<T>::end() {
+  typename std::map<T, typename btree<T>::Element>::iterator it = root.elements.end();
+  btree_iterator<T> bit(&root, it);
+  return bit;
+}
+
+template <typename T>
+typename btree<T>::const_iterator btree<T>::end() const {
+  typename std::map<T, typename btree<T>::Element>::const_iterator it = root.elements.end();
+  const_btree_iterator<T> bit(&root, it);
+  return bit;
 }
 
 template <typename T>

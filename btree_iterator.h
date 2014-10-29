@@ -97,6 +97,7 @@ public:
 private:
   const typename btree<T>::Node *node;
   typename std::map<T, typename btree<T>::Element>::const_iterator it;
+  bool didTraverse = false;
 
   //Helper functions
   void forward_traverse_down(const typename btree<T>::Node*,

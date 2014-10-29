@@ -226,7 +226,7 @@ class btree {
 
   //Helper functions
   void copyBTree(Node *source, Node *dest);
-  std::pair<typename btree<T>::iterator, bool> recursiveInsert(Node *node, Node *parent, const T& elem);
+  std::pair<typename btree<T>::iterator, bool> recursiveInsert(Node *node, const T& elem);
 };
 
 

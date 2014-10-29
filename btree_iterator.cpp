@@ -20,32 +20,49 @@ const T& const_btree_iterator<T>::operator*() const {
 //Operator++
 template <typename T>
 btree_iterator<T>& btree_iterator<T>::operator++() {
-  //Check if left child exists
+  //LEFT
   if (it->second.leftChild != nullptr && !didTraverse) {
+
     //If so, update current node
     node = it->second.leftChild;
     
     //expand it and traverse downwards (left)
     forward_traverse_down(node, it);
   }
-  //Otherwise we will traverse along current node
+
+  //EXIT
+  else if (it == node->elements.end() && node->parent == nullptr && didTraverse) {
+    it = node->elements.end();
+
+  }
+
+  //FORWARD
   else {
     didTraverse = false; //reset didTraverse
 
-    ++it; //Point iterator to next element in node
+    //inc
+    ++it;
 
-    //If we have reached the end of the node and this is not the root node
-    if (it == node->elements.end() && node->parent != nullptr) {
-      //Traverse up to parent node
-      forward_traverse_up(node, it);
+    if (it == node->elements.end() ) {
+
+      --it;
+
+      //Check right if exists
+      if (it->second.rightChild != nullptr) {
+        node = it->second.rightChild;
+        forward_traverse_down(node, it);
+      }
+      else {
+        forward_traverse_up(node, ++it);
+      }
     }
     //Otherwise, expand any left elements this node has (we work from bottom to top)
     else if (it->second.leftChild != nullptr) {
       node = it->second.leftChild;
       forward_traverse_down(node, it);
     }
-  }
 
+  }
   return *this;
 }
 
@@ -79,6 +96,18 @@ const_btree_iterator<T>& const_btree_iterator<T>::operator++() {
 
   return *this;
 }
+
+//Operator==
+template <typename T>
+bool btree_iterator<T>::operator==(const btree_iterator& other) const {
+  return (node == other.node && it == other.it);
+}
+
+template <typename T>
+bool const_btree_iterator<T>::operator==(const const_btree_iterator& other) const {
+  return (node == other.node && it == other.it);
+}
+
 
 /*
  * Helper functions used for repetitive operations as we move between levels in the BTree.
