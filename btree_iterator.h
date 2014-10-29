@@ -46,6 +46,7 @@ public:
 private:
   typename btree<T>::Node *node;
   typename std::map<T, typename btree<T>::Element>::iterator it;
+  bool didTraverse = false;
 
   //Helper functions
   void forward_traverse_down(typename btree<T>::Node*,

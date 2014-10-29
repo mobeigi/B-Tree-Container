@@ -5,7 +5,6 @@
 */
 
 //TEMP!!!!! remove after
-#include "btree.h"
 #include <list>
 
 /*
@@ -102,7 +101,8 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
     //Keep traversing while elem < it's element and not equal to it
     if (elem == it->first) {
       //Exact match found, return pair
-      return pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), false);
+      typename std::map<T, typename btree<T>::Element>::iterator itt(it); //create typenamed iterator from it
+      return pair<typename btree<T>::iterator, bool>(btree_iterator<T>(node, itt), false);
     }
     //If elem is less than element or this is the last element, we must insert or expand here
     else if (elem < it->first || finalIteration) {
@@ -113,7 +113,8 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
         Element e(elem);
         node->elements.insert(pair<T, Element>(elem, e));
 
-        return pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), true);
+        typename std::map<T, typename btree<T>::Element>::iterator itt(it); //create typenamed iterator from it
+        return pair<typename btree<T>::iterator, bool>(btree_iterator<T>(node, itt), true);
       }
       //Otherwise, recursively analyse the left or right child
       else {
@@ -134,7 +135,7 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
           else
             it->second.leftChild = child;
         }
-        
+
         return recursiveInsert(child, node, elem);
       }
     }
@@ -146,6 +147,43 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
   node->elements.insert(pair<T, Element>(elem, e));
 
   return pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), true);
+
+}
+
+/*
+ * begin() 
+*/
+template <typename T>
+typename btree<T>::iterator btree<T>::begin() {
+
+  //Set iterator to roots first element
+  typename std::map<T, typename btree<T>::Element>::iterator it = root.elements.begin();
+
+  //If empty root node or first element has no left child
+  if (it == root.elements.end() || it->second.leftChild == nullptr) {
+
+    //Return iterator pointing to root node
+    btree_iterator<T> bit(&root, it);
+    return bit;
+  }
+  //Otherwise, a left child exists
+  else {
+    Node *p = it->second.leftChild;
+
+    //Find the left most whild
+    while (it->second.leftChild != nullptr) {
+      p = it->second.leftChild;
+      it = p->elements.begin();
+    }
+
+    //Return iterator to lowest value element
+    btree_iterator<T> bit(p, it);
+    return bit;
+  }
+}
+
+template <typename T>
+typename btree<T>::const_iterator btree<T>::begin() const {
 
 }
 

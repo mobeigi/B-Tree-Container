@@ -214,7 +214,7 @@ class btree {
   * Each element also has a left and right child node which have value 'nullptr' to indicate no child.
   */
   struct Element {
-    Element(T val = T(), Node *left = nullptr, Node *right = nullptr) : value(val), leftChild(left), rightChild(right) {}
+    Element(T value = T(), Node *left = nullptr, Node *right = nullptr) : value(value), leftChild(left), rightChild(right) {}
     T value;
     Node *leftChild;
     Node *rightChild;
