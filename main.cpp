@@ -6,6 +6,9 @@ using namespace std;
 
 int main() {
   btree<int> b(4);
+  btree<int> c(4);
+
+
   b.insert(37);
   b.insert(20);
   b.insert(105);
@@ -24,19 +27,33 @@ int main() {
   b.insert(217);
   b.insert(210);
 
+  c.insert(1);
+  c.insert(10);
+  c.insert(3);
+  c.insert(4);
+
   /*
   for (auto it = b.root.elements.begin(); it != b.root.elements.end(); ++it) {
     cout << it->first << endl;
   }
   */
 
-  btree<int>::iterator iter = b.begin();
-
-  for (; iter != b.end(); ++iter) {
+  for (auto iter = c.rbegin(); iter != c.rend(); ++iter) {
     std::cout << *iter << std::endl;
   }
- 
 
+  /*
+  vector<int> v = { 1, 2, 3, 4, 5, 6, 7 };
+
+  // Prints 7,6,5,4,3,2,1 (reverse order)
+  // Error on --it
+  for (auto it = v.rbegin(); it != v.rend(); ++it) {
+    cout << *it << endl;
+  }
+  */
+  
+ 
+  
   //end
   cin.ignore(2);
   cin.get();
