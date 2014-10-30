@@ -76,10 +76,32 @@ void btree<T>::copyBTree(const Node *source, Node *parent, Node *dest) {
 
 /*
 * Move Semantics
+*
+* Move over root node and update all child nodes parents to point to new moved root.
+* Leave moved from object in valid state by nullifing all left and right child links.
 */
 template <typename T>
 btree<T>::btree(btree<T>&& original) {
+  maxElements = original.maxElements;
+  root = std::move(original.root);
 
+  //Iterate through root elements
+  for (auto it = root.elements.begin(); it != root.elements.end(); ++it) {
+    //For each valid child, update the parent node to newely moved node
+    if (it->second.leftChild != nullptr) {
+      it->second.leftChild->parent = &root;
+    }
+
+    if (it->second.rightChild != nullptr) {
+      it->second.rightChild->parent = &root;
+    }
+  }
+
+  //We have to leave original in a valid state
+  //We must nullify its child links so that it can destruct correctly
+  for (auto it = original.root.elements.begin(); it != original.root.elements.end(); ++it) {
+    it->second.leftChild = it->second.rightChild = nullptr;
+  }
 }
 
 /*
@@ -104,7 +126,28 @@ btree<T>& btree<T>::operator=(const btree<T>& rhs) {
 */
 template <typename T>
 btree<T>& btree<T>::operator=(btree<T>&& rhs) {
+  maxElements = rhs.maxElements;
+  root = std::move(rhs.root);
 
+  //Iterate through root elements
+  for (auto it = root.elements.begin(); it != root.elements.end(); ++it) {
+    //For each valid child, update the parent node to newely moved node
+    if (it->second.leftChild != nullptr) {
+      it->second.leftChild->parent = &root;
+    }
+
+    if (it->second.rightChild != nullptr) {
+      it->second.rightChild->parent = &root;
+    }
+  }
+
+  //We have to leave original in a valid state
+  //We must nullify its child links so that it can destruct correctly
+  for (auto it = rhs.root.elements.begin(); it != rhs.root.elements.end(); ++it) {
+    it->second.leftChild = it->second.rightChild = nullptr;
+  }
+
+  return *this;
 }
 
 /*
@@ -245,7 +288,7 @@ typename btree<T>::const_iterator btree<T>::recursiveFind(const Node* node, cons
       return recursiveFind(it->second.rightChild, elem);
     //Otherwise, element is not in Btree
     else
-      return cend();
+      return end();
   }
   //Otherwise see if this is value we are searching for
   else if (it->first == elem) {
@@ -259,7 +302,7 @@ typename btree<T>::const_iterator btree<T>::recursiveFind(const Node* node, cons
       return recursiveFind(it->second.leftChild, elem);
     //Otherwise, element is not in Btree
     else
-      return cend();
+      return end();
   }
 }
 

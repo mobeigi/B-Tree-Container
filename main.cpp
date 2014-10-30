@@ -72,10 +72,11 @@ int main() {
   cout << "-------------" << endl;
 
   btree<int> other;
-  other = b;
+  other = std::move(b);
 
   b.~btree();
 
+  
   for (auto it = other.begin(); it != other.end(); ++it) {
     cout << *it << endl;
   }
