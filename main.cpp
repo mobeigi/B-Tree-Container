@@ -38,14 +38,19 @@ int main() {
   }
   */
 
-  for (auto iter = b.begin(); iter != b.end(); ++iter) {
-    //++*iter;
+  auto iter2 = b.cbegin();
+
+  for (auto iter = b.cbegin(); iter != b.cend(); ++iter) {
+    if (*iter == 200) {
+      iter2 = iter;
+      break;
+    }
   }
 
   cout << "-------------" << endl;
 
-  for (auto iter = b.crbegin(); iter != b.crend(); ++iter) {
-    //std::cout << *iter << std::endl;
+  for (; iter2 != b.cend(); ++iter2) {
+    cout << *iter2 << endl;
   }
 
 

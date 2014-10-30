@@ -17,6 +17,27 @@ const T& const_btree_iterator<T>::operator*() const {
   return it->second.value;
 }
 
+//Operator=
+template <typename T>
+btree_iterator<T>& btree_iterator<T>::operator=(const btree_iterator<T>& other) {
+  //Set iterator fields
+  node = other.node;
+  it = other.it;
+  didTraverse = other.didTraverse;
+
+  return *this;
+}
+
+template <typename T>
+const_btree_iterator<T>& const_btree_iterator<T>::operator=(const const_btree_iterator<T>& other) {
+  //Set iterator fields
+  node = other.node;
+  it = other.it;
+  didTraverse = other.didTraverse;
+
+  return *this;
+}
+
 //Operator++
 template <typename T>
 btree_iterator<T>& btree_iterator<T>::operator++() {
@@ -114,6 +135,22 @@ const_btree_iterator<T>& const_btree_iterator<T>::operator++() {
   }
 
   return *this;
+}
+
+
+//Operator++ post increment
+template <typename T>
+btree_iterator<T>& btree_iterator<T>::operator++(int) {
+  btree_iterator<T> *copy = new btree_iterator<T>(node, it);
+  ++(*this);
+  return *copy;
+}
+
+template <typename T>
+const_btree_iterator<T>& const_btree_iterator<T>::operator++(int) {
+  const_btree_iterator<T> *copy = new const_btree_iterator<T>(node, it);
+  ++(*this);
+  return *copy;
 }
 
 //Operator--
@@ -231,6 +268,22 @@ const_btree_iterator<T>& const_btree_iterator<T>::operator--() {
 
   return *this;
 }
+
+//Operator-- post decrement
+template <typename T>
+btree_iterator<T>& btree_iterator<T>::operator--(int) {
+  btree_iterator<T> *copy = new btree_iterator<T>(node, it);
+  --(*this);
+  return *copy;
+}
+
+template <typename T>
+const_btree_iterator<T>& const_btree_iterator<T>::operator--(int) {
+  const_btree_iterator<T> *copy = new const_btree_iterator<T>(node, it);
+  --(*this);
+  return *copy;
+}
+
 
 //Operator==
 template <typename T>
