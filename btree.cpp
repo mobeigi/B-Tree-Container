@@ -289,8 +289,8 @@ typename btree<T>::iterator btree<T>::end() {
 */
 template <typename T>
 typename btree<T>::const_iterator btree<T>::cend() const {
-  typename std::map<T, typename btree<T>::Element>::iterator it = root.elements.end();
-  btree_iterator<T> bit(&root, it);
+  typename std::map<T, typename btree<T>::Element>::const_iterator it = root.elements.end();
+  const_btree_iterator<T> bit(&root, it);
   return bit;
 }
 

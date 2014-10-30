@@ -27,8 +27,6 @@ int main() {
   b.insert(217);
   b.insert(210);
 
-  b.insert(0);
-
 
   c.insert(1);
   c.insert(10);
@@ -36,18 +34,15 @@ int main() {
   c.insert(4);
 
   
-  
-  /*
 
-  for (auto iter = b.begin(); iter != b.end(); ++iter) {
+  for (auto iter = b.cbegin(); iter != b.cend(); ++iter) {
     cout << *iter << endl;
   }
 
-  */
 
   cout << "-------------" << endl;
 
-  cout << b << endl;
+  //cout << b << endl;
 
 
   /*
