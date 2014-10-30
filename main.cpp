@@ -18,7 +18,7 @@ int main() {
 
   b.insert(100);
 
-  auto test = b.insert(200);
+  b.insert(200);
   b.insert(201);
   b.insert(202);
   b.insert(250);
@@ -26,6 +26,9 @@ int main() {
 
   b.insert(217);
   b.insert(210);
+
+  b.insert(0);
+
 
   c.insert(1);
   c.insert(10);
@@ -43,7 +46,6 @@ int main() {
   */
 
   cout << "-------------" << endl;
-
 
   cout << b << endl;
 

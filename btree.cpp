@@ -58,6 +58,9 @@ btree<T>& btree<T>::operator=(btree<T>&& rhs) {
 /*
 * Print out tree values in breadth-first (level) order.
 * Assumes << operator is implemented on type T
+*
+* Complexity: O(log n) to find last element in BTree and O(n) to print out each value
+* TODO: Improve complexity by implementing proper end()
 */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const btree<T>& tree) {
