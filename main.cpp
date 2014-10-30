@@ -56,8 +56,29 @@ int main() {
   }
 
   */
+
+
+  /*
+  for (auto iter = b.begin(); iter != b.end(); ++iter) {
+    cout << *iter << endl;
+  }
+
+  for (auto iter2 = other.begin(); iter2 != other.end(); ++iter2) {
+    cout << *iter2 << endl;
+  }
+  */
+
   
   cout << "-------------" << endl;
+
+  btree<int> other;
+  other = b;
+
+  b.~btree();
+
+  for (auto it = other.begin(); it != other.end(); ++it) {
+    cout << *it << endl;
+  }
 
   /*
   const btree<int> &bRef = b;

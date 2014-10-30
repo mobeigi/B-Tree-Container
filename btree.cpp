@@ -6,6 +6,7 @@
 
 //TEMP!!!!! remove after
 #include <queue>
+#include <utility>
 
 /*
 * Copy Semantics
@@ -15,17 +16,61 @@ btree<T>::btree(const btree<T>& original) {
   maxElements = original.maxElements;
   root = original.root;
 
-  //Recursively copy binary tree
-  copyBTree(original.root, root);
+  //Recursively copy binary tree using helper function
+  copyBTree(&original.root, nullptr, &root);
 }
 
-//Helper Function: Copy nodes in btree recursively
+/*
+ * Helper Function : Copy nodes in btree recursively.
+*/
 template <typename T>
-void btree<T>::copyBTree(Node *source, Node *dest) {
-  //Iterate over node
-  for(std::map<T, Element>::iterator it = source.elements.begin(); it != source.elements.end(); ++it) {
-    //Copy values from this node
+void btree<T>::copyBTree(const Node *source, Node *parent, Node *dest) {
+  queue<Node*> sourceChilds;
+  queue<Node*> destChilds;
 
+  //Copy map from source to dest
+  dest->elements = source->elements;
+
+  //Copy parent
+  dest->parent = parent;
+
+  //For each node
+  auto dit = dest->elements.begin();
+
+  for (auto sit = source->elements.begin(); sit != source->elements.end(); ++sit, ++dit) {
+    //Check left child for a valid node to copy
+    if (sit->second.leftChild != nullptr) {
+      //Make new node with this node as its parent
+      Node *newNode = new Node(dest);
+
+      sourceChilds.push(sit->second.leftChild);
+      destChilds.push(newNode);
+      dit->second.leftChild = newNode;
+    }
+
+    //Check right child for a valid node to copy
+    if (sit->second.rightChild != nullptr) {
+      //Make new node with this node as its parent
+      Node *newNode = new Node(dest);
+
+      sourceChilds.push(sit->second.rightChild);
+      destChilds.push(newNode);
+      dit->second.rightChild = newNode;
+    }
+  }
+
+  //For each children
+  while (!sourceChilds.empty()) {
+    //Get front node
+    Node *nextSource = sourceChilds.front();
+    Node *nextDest = destChilds.front();
+
+    //Pop it off queue
+    sourceChilds.pop();
+    destChilds.pop();
+
+    //Recursively copy child nodes with this node as the parent
+    copyBTree(nextSource, dest, nextDest);
   }
 }
 
@@ -39,11 +84,19 @@ btree<T>::btree(btree<T>&& original) {
 
 /*
  * Operater= Copy Semantics 
+ *
+ * TODO: Fix semantics, should this or copy constructor be using each other?
 */
 template <typename T>
 btree<T>& btree<T>::operator=(const btree<T>& rhs) {
-  btree<T> *b = new btree<T>(rhs);
-  return *b;
+  maxElements = rhs.maxElements;
+  root = rhs.root;
+  
+  //Recursively copy binary tree using helper function
+  copyBTree(&rhs.root, nullptr, &root);
+
+  //Return this pointer
+  return *this;
 }
 
 /*
@@ -51,8 +104,7 @@ btree<T>& btree<T>::operator=(const btree<T>& rhs) {
 */
 template <typename T>
 btree<T>& btree<T>::operator=(btree<T>&& rhs) {
-  btree<T> b = std::move(rhs);
-  return b;
+
 }
 
 /*
