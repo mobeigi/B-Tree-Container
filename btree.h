@@ -122,14 +122,21 @@ class btree {
   //non-const and const iterators for begin() and end()
   iterator begin();
   iterator end();
-  const_iterator cbegin() const;
-  const_iterator cend() const;
+
+  const_iterator begin() const; //const begin()
+  const_iterator end() const; //const end()
+  const_iterator cbegin() const { return begin(); };  //cbegin()
+  const_iterator cend() const { return end(); };    //cend()
 
   //We can also provide reverse iteration operations using rever_iterator adaptors
-  reverse_iterator rbegin() { return reverse_iterator(end()); }
-  const_reverse_iterator crbegin() const { return const_reverse_iterator(cend()); }
-  reverse_iterator rend() { return reverse_iterator(begin()); }
-  const_reverse_iterator crend() const { return const_reverse_iterator(cbegin()); }
+  reverse_iterator rbegin() { return reverse_iterator(end()); } //rbegin
+  const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); } //const rbegin
+  const_reverse_iterator crbegin() const { return rbegin(); }  //crbegin()
+  
+  reverse_iterator rend() { return reverse_iterator(begin()); } //rend
+  const_reverse_iterator rend() const { return const_reverse_iterator(begin()); } //const rend
+  const_reverse_iterator crend() const { return rend(); }  //crend()
+
 
   /**
     * Returns an iterator to the matching element, or whatever 
@@ -229,8 +236,8 @@ class btree {
   void copyBTree(Node *source, Node *dest);
   static void printBTree(std::ostream& os, const Node *node, const T &lastValue); //declare static so nonmember << operator may use it
   std::pair<typename btree<T>::iterator, bool> recursiveInsert(Node *node, const T& elem);
-  iterator recursiveFind(Node* node, const T& elem);
-  const_iterator recursiveFind(Node* node, const T& elem) const;
+  iterator recursiveFind(const Node* node, const T& elem);
+  const_iterator recursiveFind(const Node* node, const T& elem) const;
 
 };
 

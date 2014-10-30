@@ -38,6 +38,7 @@ public:
   btree_iterator<T>& operator--(int);
 
   btree_iterator() {};
+
   btree_iterator(typename btree<T>::Node *n,
     typename std::map<T, typename btree<T>::Element>::iterator it)
     : node(n), it(it) {}
@@ -83,8 +84,12 @@ public:
   const_btree_iterator& operator++(int);
   const_btree_iterator& operator--();
   const_btree_iterator& operator--(int);
-
+  
   const_btree_iterator() {};
+
+  //Allow seemless conversion of btree_iterator to const_btree_iterator
+  const_btree_iterator(const btree_iterator<T>& it) : const_btree_iterator(it.node, it.it) {};
+
   const_btree_iterator(const typename btree<T>::Node *n,
     typename std::map<T, typename btree<T>::Element>::const_iterator it)
     : node(n), it(it) {}

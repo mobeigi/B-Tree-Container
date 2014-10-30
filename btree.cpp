@@ -143,7 +143,7 @@ typename btree<T>::const_iterator btree<T>::find(const T& elem) const {
  * Complexity: O(log n) to find location of element using left and right child links
 */
 template <typename T>
-typename btree<T>::iterator btree<T>::recursiveFind(Node* node, const T& elem) {
+typename btree<T>::iterator btree<T>::recursiveFind(const Node* node, const T& elem) {
   //Make iterator and set it to lower bound for this node
   typename std::map<T, typename btree<T>::Element>::iterator it = node->elements.lower_bound(elem);
   
@@ -178,7 +178,7 @@ typename btree<T>::iterator btree<T>::recursiveFind(Node* node, const T& elem) {
 }
 
 template <typename T>
-typename btree<T>::const_iterator btree<T>::recursiveFind(Node* node, const T& elem) const {
+typename btree<T>::const_iterator btree<T>::recursiveFind(const Node* node, const T& elem) const {
   //Make iterator and set it to lower bound for this node
   typename std::map<T, typename btree<T>::Element>::const_iterator it = node->elements.lower_bound(elem);
 
@@ -293,7 +293,7 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
  * begin() 
 */
 template <typename T>
-typename btree<T>::iterator btree<T>::begin()  {
+typename btree<T>::iterator btree<T>::begin() {
 
   //Set iterator to roots first element
   typename std::map<T, typename btree<T>::Element>::iterator it = root.elements.begin();
@@ -323,7 +323,7 @@ typename btree<T>::iterator btree<T>::begin()  {
 * cbegin()
 */
 template <typename T>
-typename btree<T>::const_iterator btree<T>::cbegin() const {
+typename btree<T>::const_iterator btree<T>::begin() const {
 
   //Set iterator to roots first element
   typename std::map<T, typename btree<T>::Element>::const_iterator it = root.elements.begin();
@@ -363,7 +363,7 @@ typename btree<T>::iterator btree<T>::end() {
 * cend()
 */
 template <typename T>
-typename btree<T>::const_iterator btree<T>::cend() const {
+typename btree<T>::const_iterator btree<T>::end() const {
   typename std::map<T, typename btree<T>::Element>::const_iterator it = root.elements.end();
   return const_btree_iterator<T>(&root, it);
 }

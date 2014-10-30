@@ -46,18 +46,30 @@ int main() {
   c.insert(3);
   c.insert(4);
 
-  
+
   /*
-  for (auto iter = b.cbegin(); iter != b.cend(); ++iter) {
+   btree<int> &bRef = b;
+
+  for (auto iter = bRef.begin(); iter != bRef.end(); ++iter) {
+    ++*iter;
     cout << *iter << endl;
   }
+
   */
   
-
-
   cout << "-------------" << endl;
 
-  find_in_tree(c, 100);
+  /*
+  const btree<int> &bRef = b;
+  auto iter = std::find(bRef.cbegin(), bRef.cend(), 37);
+  */
+
+  /*
+  if (iter == bRef.cend())
+    std::cout << " not found" << std::endl;
+  else
+    std::cout << *iter << " found" << std::endl;
+  */
 
   /*
 
