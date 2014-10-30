@@ -18,7 +18,7 @@ int main() {
 
   b.insert(100);
 
-  b.insert(200);
+  auto test = b.insert(200);
   b.insert(201);
   b.insert(202);
   b.insert(250);
@@ -32,39 +32,47 @@ int main() {
   c.insert(3);
   c.insert(4);
 
+  
+  
   /*
-  for (auto it = b.root.elements.begin(); it != b.root.elements.end(); ++it) {
-    cout << it->first << endl;
+
+  for (auto iter = b.begin(); iter != b.end(); ++iter) {
+    cout << *iter << endl;
   }
+
   */
 
-  auto iter2 = b.cbegin();
-
-  for (auto iter = b.cbegin(); iter != b.cend(); ++iter) {
-    if (*iter == 200) {
-      iter2 = iter;
-      break;
-    }
-  }
-
   cout << "-------------" << endl;
+
+
+  cout << b << endl;
+
+
+  /*
 
   for (; iter2 != b.cend(); ++iter2) {
     cout << *iter2 << endl;
   }
 
-
+  */
 
   /*
+
   vector<int> v = { 1, 2, 3, 4, 5, 6, 7 };
+  map<int, string> m;
+  m.insert(pair<int, string>(1, "LOL1"));
+  m.insert(pair<int, string>(2, "LOL2"));
+  m.insert(pair<int, string>(3, "LOL3"));
 
   // Prints 7,6,5,4,3,2,1 (reverse order)
   // Error on --it
-  for (auto it = v.rbegin(); it != v.rend(); ++it) {
-    ++*it;
-    cout << *it << endl;
+  for (auto it = m.cbegin(); it != m.cend(); ++it) {
+    ;
   }
+
   */
+
+  
   
  
   

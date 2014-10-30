@@ -5,7 +5,7 @@
 */
 
 //TEMP!!!!! remove after
-#include <list>
+#include <queue>
 
 /*
 * Copy Semantics
@@ -61,8 +61,63 @@ btree<T>& btree<T>::operator=(btree<T>&& rhs) {
 */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const btree<T>& tree) {
-  //IMPLEMENT USING ITERATORS
+
+  //Determine value of last element in this BTree
+  typename std::map<T, typename btree<T>::Element>::const_iterator it = tree.root.elements.end();
+
+  //Get last element in root
+  --it;
+
+  //Get lowest rightmost value, this will be last element in BTree
+  while (it->second.rightChild != nullptr) {
+    it = it->second.rightChild->elements.end();
+    --it;
+  }
+
+  //Delegate printing to recursive helper function
+  btree<T>::printBTree(os, &tree.root, it->first);
+
+  return os;
 }
+
+/*
+ * Helper Function: Print out node contents recursively with a single space between each element
+ * A final space is not printed for the final value. This required the passing of the value by reference and works as this value will be unique.
+*/
+template <typename T>
+void btree<T>::printBTree(std::ostream& os, const Node *node, const T &lastValue) {
+  queue<Node*> childs;
+
+  //Print out elements in this node
+  for (auto it = node->elements.cbegin(); it != node->elements.cend(); ++it) {
+    //Print out value
+    os << it->first;
+
+    //Print space for all but last element
+    if (it->first != lastValue)
+      os << " ";
+
+    if (it->second.leftChild != nullptr)
+      childs.push(it->second.leftChild);
+
+    if (it->second.rightChild != nullptr)
+      childs.push(it->second.rightChild);
+  }
+
+  //For each children
+  while (!childs.empty()) {
+    //Get front node
+    Node *n = childs.front();
+
+    //Pop it off queue
+    childs.pop();
+
+    //Recursively print its contents
+    printBTree(os, n, lastValue);
+  }
+
+}
+
 
 template <typename T>
 typename btree<T>::iterator btree<T>::find(const T& elem) {
@@ -231,12 +286,14 @@ typename btree<T>::iterator btree<T>::end() {
 */
 template <typename T>
 typename btree<T>::const_iterator btree<T>::cend() const {
-  typename std::map<T, typename btree<T>::Element>::const_iterator it = root.elements.end();
-  const_btree_iterator<T> bit(&root, it);
+  typename std::map<T, typename btree<T>::Element>::iterator it = root.elements.end();
+  btree_iterator<T> bit(&root, it);
   return bit;
 }
 
-
+/*
+ *  Destructor 
+*/
 template <typename T>
 btree<T>::~btree() {
 
