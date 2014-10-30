@@ -183,11 +183,14 @@ typename btree<T>::iterator btree<T>::begin() {
   }
 }
 
+/*
+* cbegin()
+*/
 template <typename T>
-typename btree<T>::const_iterator btree<T>::begin() const {
+typename btree<T>::const_iterator btree<T>::cbegin() const {
 
   //Set iterator to roots first element
-  typename std::map<T, typename btree<T>::Element>::const_btree_iterator it = root.elements.begin();
+  typename std::map<T, typename btree<T>::Element>::const_iterator it = root.elements.begin();
 
   //If empty root node or first element has no left child
   if (it == root.elements.end() || it->second.leftChild == nullptr) {
@@ -223,12 +226,16 @@ typename btree<T>::iterator btree<T>::end() {
   return bit;
 }
 
+/*
+* cend()
+*/
 template <typename T>
-typename btree<T>::const_iterator btree<T>::end() const {
+typename btree<T>::const_iterator btree<T>::cend() const {
   typename std::map<T, typename btree<T>::Element>::const_iterator it = root.elements.end();
   const_btree_iterator<T> bit(&root, it);
   return bit;
 }
+
 
 template <typename T>
 btree<T>::~btree() {

@@ -38,9 +38,17 @@ int main() {
   }
   */
 
-  for (auto iter = c.rbegin(); iter != c.rend(); ++iter) {
-    std::cout << *iter << std::endl;
+  for (auto iter = b.begin(); iter != b.end(); ++iter) {
+    //++*iter;
   }
+
+  cout << "-------------" << endl;
+
+  for (auto iter = b.crbegin(); iter != b.crend(); ++iter) {
+    //std::cout << *iter << std::endl;
+  }
+
+
 
   /*
   vector<int> v = { 1, 2, 3, 4, 5, 6, 7 };
@@ -48,6 +56,7 @@ int main() {
   // Prints 7,6,5,4,3,2,1 (reverse order)
   // Error on --it
   for (auto it = v.rbegin(); it != v.rend(); ++it) {
+    ++*it;
     cout << *it << endl;
   }
   */
