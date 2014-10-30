@@ -121,15 +121,94 @@ void btree<T>::printBTree(std::ostream& os, const Node *node, const T &lastValue
 
 }
 
-
+/*
+ * Returns: an iterator positioned at the element found in the B-Tree. If the element being searched is not 
+ * found in the B-Tree, an iterator that is equal to the return value of end() is returned.
+*/
 template <typename T>
 typename btree<T>::iterator btree<T>::find(const T& elem) {
-  
+  //Delegate work to recursive helper function
+  return recursiveFind(&root, elem);
 }
 
 template <typename T>
 typename btree<T>::const_iterator btree<T>::find(const T& elem) const {
+  //Delegate work to recursive helper function
+  return recursiveFind(&root, elem);
+}
+
+/*
+ * Helper function: Recursively search for an element in a node.
+ *
+ * Complexity: O(log n) to find location of element using left and right child links
+*/
+template <typename T>
+typename btree<T>::iterator btree<T>::recursiveFind(Node* node, const T& elem) {
+  //Make iterator and set it to lower bound for this node
+  typename std::map<T, typename btree<T>::Element>::iterator it = node->elements.lower_bound(elem);
   
+  //Check if elem is bigger than all values in this node
+  if (it == node->elements.end()) {
+
+    //Get last element
+    --it;
+
+    //If last element has a right child, search for elem there
+    if (it->second.rightChild != nullptr)
+      return recursiveFind(it->second.rightChild, elem);
+    //Otherwise, element is not in Btree
+    else
+      return end();
+  }
+  //Otherwise see if this is value we are searching for
+  else if (it->first == elem) {
+    //If so return iterator to this element
+    return btree_iterator<T>(node, it);
+  }
+  //Otherwise value must be located in left child
+  else {
+    //If last element has a left child, search for elem there
+    if (it->second.leftChild != nullptr)
+      return recursiveFind(it->second.leftChild, elem);
+    //Otherwise, element is not in Btree
+    else
+      return end();
+  }
+
+}
+
+template <typename T>
+typename btree<T>::const_iterator btree<T>::recursiveFind(Node* node, const T& elem) const {
+  //Make iterator and set it to lower bound for this node
+  typename std::map<T, typename btree<T>::Element>::const_iterator it = node->elements.lower_bound(elem);
+
+  //Check if elem is bigger than all values in this node
+  if (it == node->elements.end()) {
+
+    //Get last element
+    --it;
+
+    //If last element has a right child, search for elem there
+    if (it->second.rightChild != nullptr)
+      return recursiveFind(it->second.rightChild, elem);
+    //Otherwise, element is not in Btree
+    else
+      return cend();
+  }
+  //Otherwise see if this is value we are searching for
+  else if (it->first == elem) {
+    //If so return iterator to this element
+    return const_btree_iterator<T>(node, it);
+  }
+  //Otherwise value must be located in left child
+  else {
+    //If last element has a left child, search for elem there
+    if (it->second.leftChild != nullptr)
+      return recursiveFind(it->second.leftChild, elem);
+    //Otherwise, element is not in Btree
+    else
+      return cend();
+  }
 }
 
 /*
@@ -142,6 +221,7 @@ typename btree<T>::const_iterator btree<T>::find(const T& elem) const {
 */
 template <typename T>
 std::pair<typename btree<T>::iterator, bool> btree<T>::insert(const T& elem) {
+  //Delegate work to recursive helper function
   return recursiveInsert(&root, elem);
 }
 
@@ -213,7 +293,7 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
  * begin() 
 */
 template <typename T>
-typename btree<T>::iterator btree<T>::begin() {
+typename btree<T>::iterator btree<T>::begin()  {
 
   //Set iterator to roots first element
   typename std::map<T, typename btree<T>::Element>::iterator it = root.elements.begin();
@@ -222,8 +302,7 @@ typename btree<T>::iterator btree<T>::begin() {
   if (it == root.elements.end() || it->second.leftChild == nullptr) {
 
     //Return iterator pointing to root node
-    btree_iterator<T> bit(&root, it);
-    return bit;
+    return btree_iterator<T> (&root, it);
   }
   //Otherwise, a left child exists
   else {
@@ -236,8 +315,7 @@ typename btree<T>::iterator btree<T>::begin() {
     }
 
     //Return iterator to lowest value element
-    btree_iterator<T> bit(p, it);
-    return bit;
+    return btree_iterator<T>(p, it);
   }
 }
 
@@ -254,8 +332,7 @@ typename btree<T>::const_iterator btree<T>::cbegin() const {
   if (it == root.elements.end() || it->second.leftChild == nullptr) {
 
     //Return iterator pointing to root node
-    const_btree_iterator<T> bit(&root, it);
-    return bit;
+    return const_btree_iterator<T>(&root, it);
   }
   //Otherwise, a left child exists
   else {
@@ -268,8 +345,7 @@ typename btree<T>::const_iterator btree<T>::cbegin() const {
     }
 
     //Return iterator to lowest value element
-    const_btree_iterator<T> bit(p, it);
-    return bit;
+    return const_btree_iterator<T>(p, it);;
   }
 }
 
@@ -280,8 +356,7 @@ typename btree<T>::const_iterator btree<T>::cbegin() const {
 template <typename T>
 typename btree<T>::iterator btree<T>::end() {
   typename std::map<T, typename btree<T>::Element>::iterator it = root.elements.end();
-  btree_iterator<T> bit(&root, it);
-  return bit;
+  return btree_iterator<T>(&root, it);
 }
 
 /*
@@ -290,8 +365,7 @@ typename btree<T>::iterator btree<T>::end() {
 template <typename T>
 typename btree<T>::const_iterator btree<T>::cend() const {
   typename std::map<T, typename btree<T>::Element>::const_iterator it = root.elements.end();
-  const_btree_iterator<T> bit(&root, it);
-  return bit;
+  return const_btree_iterator<T>(&root, it);
 }
 
 /*

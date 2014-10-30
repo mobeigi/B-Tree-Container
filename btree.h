@@ -229,6 +229,9 @@ class btree {
   void copyBTree(Node *source, Node *dest);
   static void printBTree(std::ostream& os, const Node *node, const T &lastValue); //declare static so nonmember << operator may use it
   std::pair<typename btree<T>::iterator, bool> recursiveInsert(Node *node, const T& elem);
+  iterator recursiveFind(Node* node, const T& elem);
+  const_iterator recursiveFind(Node* node, const T& elem) const;
+
 };
 
 

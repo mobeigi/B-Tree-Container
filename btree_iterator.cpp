@@ -296,6 +296,10 @@ bool const_btree_iterator<T>::operator==(const const_btree_iterator& other) cons
   return (node == other.node && it == other.it);
 }
 
+template <typename T>
+bool const_btree_iterator<T>::operator==(const btree_iterator<T>& other) const {
+  return (node == other.node && it == other.it);
+}
 
 /*
  * Helper functions used for repetitive operations as we move between levels in the BTree.

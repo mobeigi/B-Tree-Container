@@ -1,8 +1,21 @@
-#include <iostream>
 #include "btree.h"
+
+#include <iostream>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 
 using namespace std;
+
+template <typename T>
+void find_in_tree(const btree<T> &b, T val) {
+  auto iter = std::find(b.begin(), b.end(), val);
+  if (iter == b.end())
+    std::cout << val << " not found" << std::endl;
+  else
+    std::cout << val << " found" << std::endl;
+}
+
 
 int main() {
   btree<int> b(4);
@@ -34,16 +47,17 @@ int main() {
   c.insert(4);
 
   
-
+  /*
   for (auto iter = b.cbegin(); iter != b.cend(); ++iter) {
     cout << *iter << endl;
   }
+  */
+  
 
 
   cout << "-------------" << endl;
 
-  //cout << b << endl;
-
+  find_in_tree(c, 100);
 
   /*
 
@@ -53,9 +67,8 @@ int main() {
 
   */
 
+  
   /*
-
-  vector<int> v = { 1, 2, 3, 4, 5, 6, 7 };
   map<int, string> m;
   m.insert(pair<int, string>(1, "LOL1"));
   m.insert(pair<int, string>(2, "LOL2"));
