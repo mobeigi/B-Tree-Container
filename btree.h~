@@ -5,6 +5,8 @@
  * would partition the tree into two ordered subtrees, a node 
  * that stores m client elements partition the tree 
  * into m + 1 sorted subtrees.
+ *
+ * Author: Mohammad Ghasembeigi (implementing for provided public interface)
  */
 
 #ifndef BTREE_H
@@ -16,22 +18,19 @@
 #include <map>
 #include <queue>
 
-// we better include the iterator
+//Include our btree iterator
 #include "btree_iterator.h"
 
-//Namespace
-using std::pair;
+//Use standard namespace
+using namespace std;
 
-// we do this to avoid compiler errors about non-template friends
-// what do we do, remember? :)
+//Add declarations for non-template friends
 template <typename T> class btree;
 template <typename T> std::ostream& operator<<(std::ostream& os, const btree<T>& tree);
 
 template <typename T> 
 class btree {
  public:
-  /** Hmm, need some iterator typedefs here... friends? **/
- 
   /**
    * Constructs an empty btree.  Note that
    * the elements stored in your btree must
@@ -101,23 +100,12 @@ class btree {
    */
   friend std::ostream& operator<< <T> (std::ostream& os, const btree<T>& tree);
 
-  /**
-   * The following can go here
-   * -- begin() 
-   * -- end() 
-   * -- rbegin() 
-   * -- rend() 
-   * -- cbegin() 
-   * -- cend() 
-   * -- crbegin() 
-   * -- crend() 
-   */
+  /** Iterator type definitions **/
 
   //Give friendship to iterator classes
   friend class btree_iterator<T>;
   friend class const_btree_iterator<T>;
 
-  //Typedef iterator types
   typedef btree_iterator<T> iterator;
   typedef const_btree_iterator<T> const_iterator;
   typedef std::reverse_iterator<iterator> reverse_iterator;
@@ -208,13 +196,13 @@ class btree {
 
   
 private:
-  
+
   struct Element;
 
   /*
   * A node consists of a mapping of values to Elements.
   * A map is ideal due to its weak ordering on inserted values of type T.
-  * Each node is aware of its parent node to simplify later algorithms.
+  * Each node is aware of its parent node to simplify later traversal algorithms.
   */
   struct Node {
     //Node constructor
@@ -241,18 +229,25 @@ private:
   };
 
   size_t maxElements;  //stores the max number of elements each node may contain
-  Node root;  //store the root node explicitly
+  Node root;  //store the root node as all other nodes will be linked to it
 
 
   //Helper functions
+
+  //Recursive node copy function to copy a btree
   void copyBTree(const Node *source, Node *parent, Node *dest);
+
+  //Recursive print node function to print an entire tree in breadth first order
   static void printBTree(std::ostream& os, const Node *node, std::queue<Node*>& childs, const T &lastValue); //declare static so nonmember << operator may use it
+
+  //Recursive insertion function to find and insert an elem (if it is unique)
   std::pair<typename btree<T>::iterator, bool> recursiveInsert(Node *node, const T& elem);
 
-  //Recursive find functions, non-const and const versions
+  //Recursive find functions, non-const and const versions provided to cater for non-const and const BTree's
   iterator recursiveFind(Node* node, const T& elem);
   const_iterator recursiveFind(const Node* node, const T& elem) const;
 
+  //Recursively element delete function that deletes an element and all of its linked childs
   void deleteElement(Element& e);
 
 };

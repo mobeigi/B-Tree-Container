@@ -322,12 +322,12 @@ int main() {
 
       //We've finished with test 5
       //Note that after each test, each tree should be explicitly destructed
-      //However, lets make a node on the heap to manually test the destructor
+      //However, lets make a node on the heap to test manual deletion
       btree<int> *heap = new btree<int>(4);
       *heap = a;  //copy assignment, copy from a to heap btree
 
-      //We must destruct this manually
-      heap->~btree();
+      //We must delete this manually to avoid memory leaks
+	  delete heap;
 
       cout << "Passed!" << endl;
     }
