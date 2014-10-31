@@ -21,6 +21,9 @@
 //Include our btree iterator
 #include "btree_iterator.h"
 
+//Use standard namespace
+using namespace std;
+
 //Add declarations for non-template friends
 template <typename T> class btree;
 template <typename T> std::ostream& operator<<(std::ostream& os, const btree<T>& tree);
