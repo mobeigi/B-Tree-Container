@@ -285,7 +285,13 @@ const_btree_iterator<T>& const_btree_iterator<T>::operator--(int) {
 }
 
 
-//Operator==
+/*
+ * Operator==
+ * Note that didTraverse is not checked as it has a default value of false but didTraverse will be true
+ * for end(), cend() etc. As our iterator operator= assigns didTraverse, it will always be correct for all pointed to locations except end(), cend().
+ * Thus it is left our of the comparison as to allow correct matching of end(), cend() etc
+*/
+
 template <typename T>
 bool btree_iterator<T>::operator==(const btree_iterator& other) const {
   return (node == other.node && it == other.it);
@@ -302,8 +308,8 @@ bool const_btree_iterator<T>::operator==(const btree_iterator<T>& other) const {
 }
 
 /*
- * Helper functions used for repetitive operations as we move between levels in the BTree.
- * Again, operations are directly followed by their const equivalent implementation.
+ * Below are the private helper functions used for repetitive operations as we move between levels in the BTree.
+ * Again, operations are directly followed by their const equivalent implementations.
 */
 
 /*

@@ -4,13 +4,12 @@
 #include <iterator>
 
 /**
- * You MUST implement the btree iterators as (an) external class(es) in this file.
- * Failure to do so will result in a total mark of 0 for this deliverable.
- **/
-
-// iterator related interface stuff here; would be nice if you called your
-// iterator class btree_iterator (and possibly const_btree_iterator)
-
+ * btree_iterator and const_btree_iterator implementations.
+ *
+ * Will allow in-order (from lowest to highest) traversal through a btree. 
+ * Internally, the iterator uses a map<T, Element> iterator in addition with a currend 'node' and didTraverse bool to indicate an upwards traversal.
+ *
+*/
 
 template <typename T> class btree;
 template <typename T> class const_btree_iterator;
@@ -32,13 +31,13 @@ public:
   reference operator*() const;
   pointer operator->() const { return &(operator*()); }
   btree_iterator<T>& operator=(const btree_iterator<T>&);
-  btree_iterator<T>& operator++();
-  btree_iterator<T>& operator++(int);
-  btree_iterator<T>& operator--();
-  btree_iterator<T>& operator--(int);
+  btree_iterator<T>& operator++(); //preinc
+  btree_iterator<T>& operator++(int); //postinc
+  btree_iterator<T>& operator--(); //predec
+  btree_iterator<T>& operator--(int); //postdec
 
+  //Constructors
   btree_iterator() {};
-
   btree_iterator(typename btree<T>::Node *n,
     typename std::map<T, typename btree<T>::Element>::iterator it)
     : node(n), it(it) {}
@@ -50,7 +49,7 @@ private:
   typename std::map<T, typename btree<T>::Element>::iterator it;
   bool didTraverse = false; //boolean true if last iteration traversed upwards (in the btree)
 
-  //Helper functions
+  //Helper functions used for traversing the btree recursively
   void forward_traverse_down(typename btree<T>::Node*,
     typename std::map<T, typename btree<T>::Element>::iterator&);
   void forward_traverse_up(typename btree<T>::Node*,
@@ -80,14 +79,15 @@ public:
   reference operator*() const;
   pointer operator->() const { return &(operator*()); }
   const_btree_iterator& operator=(const const_btree_iterator<T>&);
-  const_btree_iterator& operator++();
-  const_btree_iterator& operator++(int);
-  const_btree_iterator& operator--();
-  const_btree_iterator& operator--(int);
+  const_btree_iterator& operator++(); //preinc
+  const_btree_iterator& operator++(int);  //postinc
+  const_btree_iterator& operator--(); //predec
+  const_btree_iterator& operator--(int);  //post dec
   
+  //Constructors
   const_btree_iterator() {};
 
-  //Allow seemless conversion of btree_iterator to const_btree_iterator
+  //Allow conversion of btree_iterator to const_btree_iterator
   const_btree_iterator(const btree_iterator<T>& it) : const_btree_iterator(it.node, it.it) {};
 
   const_btree_iterator(const typename btree<T>::Node *n,
@@ -101,7 +101,7 @@ private:
   typename std::map<T, typename btree<T>::Element>::const_iterator it;
   bool didTraverse = false; //boolean true if last iteration traversed upwards (in the btree)
 
-  //Helper functions
+  //Helper functions used for traversing the btree recursively
   void forward_traverse_down(const typename btree<T>::Node*,
     typename std::map<T, typename btree<T>::Element>::const_iterator&);
   void forward_traverse_up(const typename btree<T>::Node*,

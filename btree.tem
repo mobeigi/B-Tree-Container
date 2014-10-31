@@ -1,11 +1,12 @@
 /*
- *  B-Tree implementation
+ * BTree implementation.
+ * btree.tem
  *
  * Author: Mohammad Ghasembeigi
 */
 
 /*
-* Copy Semantics
+* Copy constructor
 */
 template <typename T>
 btree<T>::btree(const btree<T>& original) {
@@ -71,7 +72,7 @@ void btree<T>::copyBTree(const Node *source, Node *parent, Node *dest) {
 }
 
 /*
-* Move Semantics
+* Move constructor
 *
 * Move over root node and update all child nodes parents to point to new moved root.
 * Leave moved from object in valid state by nullifing all left and right child links.
@@ -101,9 +102,7 @@ btree<T>::btree(btree<T>&& original) {
 }
 
 /*
- * Operater= Copy Semantics 
- *
- * TODO: Fix semantics, should this or copy constructor be using each other?
+ * Operater= Copy Semantics (assignment operator)
 */
 template <typename T>
 btree<T>& btree<T>::operator=(const btree<T>& rhs) {
@@ -118,7 +117,7 @@ btree<T>& btree<T>::operator=(const btree<T>& rhs) {
 }
 
 /*
-* Operater= Move Semantics
+* Operater= Move Semantics (assignment operator)
 */
 template <typename T>
 btree<T>& btree<T>::operator=(btree<T>&& rhs) {
@@ -150,8 +149,8 @@ btree<T>& btree<T>::operator=(btree<T>&& rhs) {
 * Print out tree values in breadth-first (level) order.
 * Assumes << operator is implemented on type T
 *
-* Complexity: O(log n) to find last element in BTree and O(n) to print out each value
-* TODO: Improve complexity by implementing proper end()
+* Complexity: O(log n) to find last element in BTree and O(n) to print out each value. Remember end() is O(1)
+* This complexity is identical to having an O(log n) end() function and O(n) print function.
 */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const btree<T>& tree) {
@@ -181,6 +180,8 @@ std::ostream& operator<<(std::ostream& os, const btree<T>& tree) {
 /*
  * Helper Function: Print out node contents recursively with a single space between each element
  * A final space is not printed for the final value. This required the passing of the value by reference and works as this value will be unique.
+ *
+ * Complexity: See notes for operator<<
 */
 template <typename T>
 void btree<T>::printBTree(std::ostream& os, const Node *node, std::queue<Node*> &childs, const T &lastValue) {
@@ -274,6 +275,7 @@ typename btree<T>::iterator btree<T>::recursiveFind(Node* node, const T& elem) {
 
 }
 
+//Const equivalent to above recursiveFind function. Only difference is node is taken with const qualifier.
 template <typename T>
 typename btree<T>::const_iterator btree<T>::recursiveFind(const Node* node, const T& elem) const {
   //Make iterator and set it to lower bound for this node
@@ -321,6 +323,15 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::insert(const T& elem) {
   return recursiveInsert(&root, elem);
 }
 
+/*
+* Helper function: Recursive insertion function to find and insert an elem (if it is unique)
+*
+* As a map is used for the underlying containter, we can simply use the return pair from map::insert which contains an iterator to the inserted element.
+* Our btree_iterator can then construct a btree_iterator from this iterator.
+*
+* Complexity: O(log n) to find location of element using left and right child links and insert at that location or detect duplicate
+*/
+
 template <typename T>
 std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *node, const T& elem) {
 
@@ -345,7 +356,7 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
       if (node->elements.size() < maxElements) {
         //Create new element
         Element e(elem);
-        auto itt = node->elements.insert(std::pair<T, Element>(elem, e)); //insert and get insert pair
+        auto itt = node->elements.insert(std::pair<T, Element>(elem, e)); //insert and get insert pair from map::insert
         return std::pair<typename btree<T>::iterator, bool>(btree_iterator<T>(node, itt.first), true);  //itt.first will be a iterator to the map element
       }
       //Otherwise, recursively analyse the left or right child
@@ -375,17 +386,20 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
   }
 
 
-  //No elements in the node, we must add the new element
+  //No elements in the node (for loop did not iterate at all), we must add the new element
   //Create new element
   Element e(elem);
-  auto itt = node->elements.insert(std::pair<T, Element>(elem, e)); //insert and get insert pair
+  auto itt = node->elements.insert(std::pair<T, Element>(elem, e)); //insert and get insert pair from map::insert
 
+  //Return this new pair
   return std::pair<typename btree<T>::iterator, bool>(btree<T>::iterator(node, itt.first), true);
 
 }
 
 /*
  * begin() 
+ *
+ * Complexity: O(log n) on average. O(n) for degenerate tree (worst case as tree isn't auto balanced as per spec)
 */
 template <typename T>
 typename btree<T>::iterator btree<T>::begin() {
@@ -446,6 +460,8 @@ typename btree<T>::const_iterator btree<T>::begin() const {
 
 /*
 * end()
+*
+* Complexity: O(1), returns first element in root node. Iterators utilise this for performance gains.
 */
 
 template <typename T>
@@ -466,18 +482,20 @@ typename btree<T>::const_iterator btree<T>::end() const {
 /*
  * Destructor 
  *
- * Delegates work to helper function deleteElements.
+ * Delegates work to helper function deleteElements to delete all elements that are linked to root node.
 */
 template <typename T>
 btree<T>::~btree() {
+  //For each element in the root node
   for (auto it = root.elements.begin(); it != root.elements.end(); ++it) {
+    //Delete its elements
     deleteElement(it->second);
   }
 }
 
 /*
  * Helper function: Expands elements left and right childs recursively, calling deleteElement on them.
- * Deletes all elements from bottom of tree to top.
+ * Deletes all elements from the bottom of tree to the top (that is final elements to be deleted will belong to the root node)
 */
 template <typename T>
 void btree<T>::deleteElement(Element& e) {
