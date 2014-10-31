@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <utility>
 #include <map>
+#include <queue>
 
 // we better include the iterator
 #include "btree_iterator.h"
@@ -204,8 +205,9 @@ class btree {
     * Check that your implementation does not leak memory!
     */
   ~btree();
+
   
-//private:
+private:
   
   struct Element;
 
@@ -215,8 +217,11 @@ class btree {
   * Each node is aware of its parent node to simplify later algorithms.
   */
   struct Node {
+    //Node constructor
     Node(Node* p = nullptr) : parent(p), elements(std::map<T, Element>()) {}
-    Node *parent;
+
+    //Structures
+    Node* parent;
     std::map<T, Element> elements;
   };
 
@@ -225,10 +230,14 @@ class btree {
   * Each element also has a left and right child node which have value 'nullptr' to indicate no child.
   */
   struct Element {
+    //Element constructor
     Element(T value = T(), Node *left = nullptr, Node *right = nullptr) : value(value), leftChild(left), rightChild(right) {}
+    
+    //Structures
     T value;
     Node *leftChild;
     Node *rightChild;
+
   };
 
   size_t maxElements;  //stores the max number of elements each node may contain
@@ -237,10 +246,14 @@ class btree {
 
   //Helper functions
   void copyBTree(const Node *source, Node *parent, Node *dest);
-  static void printBTree(std::ostream& os, const Node *node, const T &lastValue); //declare static so nonmember << operator may use it
+  static void printBTree(std::ostream& os, const Node *node, std::queue<Node*>& childs, const T &lastValue); //declare static so nonmember << operator may use it
   std::pair<typename btree<T>::iterator, bool> recursiveInsert(Node *node, const T& elem);
-  iterator recursiveFind(const Node* node, const T& elem);
+
+  //Recursive find functions, non-const and const versions
+  iterator recursiveFind(Node* node, const T& elem);
   const_iterator recursiveFind(const Node* node, const T& elem) const;
+
+  void deleteElement(Element& e);
 
 };
 

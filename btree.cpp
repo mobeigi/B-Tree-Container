@@ -4,9 +4,6 @@
  * Author: Mohammad Ghasembeigi
 */
 
-//Includes
-#include <queue>
-
 /*
 * Copy Semantics
 */
@@ -171,8 +168,12 @@ std::ostream& operator<<(std::ostream& os, const btree<T>& tree) {
     --it;
   }
 
+  //Create childs queue which we will use for the BF traversal
+  //This will keep track of which node is next to expand and will be passed by reference
+  std::queue<btree<T>::Node*> childs;
+
   //Delegate printing to recursive helper function
-  btree<T>::printBTree(os, &tree.root, it->first);
+  btree<T>::printBTree(os, &tree.root, childs, it->first);
 
   return os;
 }
@@ -182,11 +183,11 @@ std::ostream& operator<<(std::ostream& os, const btree<T>& tree) {
  * A final space is not printed for the final value. This required the passing of the value by reference and works as this value will be unique.
 */
 template <typename T>
-void btree<T>::printBTree(std::ostream& os, const Node *node, const T &lastValue) {
-  std::queue<Node*> childs;
+void btree<T>::printBTree(std::ostream& os, const Node *node, std::queue<Node*> &childs, const T &lastValue) {
 
   //Print out elements in this node
-  for (auto it = node->elements.cbegin(); it != node->elements.cend(); ++it) {
+  for (auto it = node->elements.begin(); it != node->elements.end(); ++it) {
+    
     //Print out value
     os << it->first;
 
@@ -194,11 +195,13 @@ void btree<T>::printBTree(std::ostream& os, const Node *node, const T &lastValue
     if (it->first != lastValue)
       os << " ";
 
-    if (it->second.leftChild != nullptr)
+    if (it->second.leftChild != nullptr) {
       childs.push(it->second.leftChild);
+    }
 
-    if (it->second.rightChild != nullptr)
+    if (it->second.rightChild != nullptr) {
       childs.push(it->second.rightChild);
+    }
   }
 
   //For each children
@@ -210,7 +213,7 @@ void btree<T>::printBTree(std::ostream& os, const Node *node, const T &lastValue
     childs.pop();
 
     //Recursively print its contents
-    printBTree(os, n, lastValue);
+    printBTree(os, n, childs, lastValue);
   }
 
 }
@@ -237,7 +240,7 @@ typename btree<T>::const_iterator btree<T>::find(const T& elem) const {
  * Complexity: O(log n) to find location of element using left and right child links
 */
 template <typename T>
-typename btree<T>::iterator btree<T>::recursiveFind(const Node* node, const T& elem) {
+typename btree<T>::iterator btree<T>::recursiveFind(Node* node, const T& elem) {
   //Make iterator and set it to lower bound for this node
   typename std::map<T, typename btree<T>::Element>::iterator it = node->elements.lower_bound(elem);
   
@@ -311,7 +314,6 @@ typename btree<T>::const_iterator btree<T>::recursiveFind(const Node* node, cons
 * Returns: A pair consisting of an iterator positioned at the element inserted and a boolean indicating the 
 * success of insertion.
 *
-* TODO: Ensure proper iterations are returned in pairs
 */
 template <typename T>
 std::pair<typename btree<T>::iterator, bool> btree<T>::insert(const T& elem) {
@@ -343,10 +345,8 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
       if (node->elements.size() < maxElements) {
         //Create new element
         Element e(elem);
-        node->elements.insert(std::pair<T, Element>(elem, e));
-
-        typename std::map<T, typename btree<T>::Element>::iterator itt(it); //create typenamed iterator from it
-        return std::pair<typename btree<T>::iterator, bool>(btree_iterator<T>(node, itt), true);
+        auto itt = node->elements.insert(std::pair<T, Element>(elem, e)); //insert and get insert pair
+        return std::pair<typename btree<T>::iterator, bool>(btree_iterator<T>(node, itt.first), true);  //itt.first will be a iterator to the map element
       }
       //Otherwise, recursively analyse the left or right child
       else {
@@ -374,12 +374,13 @@ std::pair<typename btree<T>::iterator, bool> btree<T>::recursiveInsert(Node *nod
     }
   }
 
+
   //No elements in the node, we must add the new element
   //Create new element
   Element e(elem);
-  node->elements.insert(std::pair<T, Element>(elem, e));
+  auto itt = node->elements.insert(std::pair<T, Element>(elem, e)); //insert and get insert pair
 
-  return std::pair<typename btree<T>::iterator, bool>(btree<T>::iterator(), true);
+  return std::pair<typename btree<T>::iterator, bool>(btree<T>::iterator(node, itt.first), true);
 
 }
 
@@ -463,10 +464,44 @@ typename btree<T>::const_iterator btree<T>::end() const {
 }
 
 /*
- *  Destructor 
+ * Destructor 
+ *
+ * Delegates work to helper function deleteElements.
 */
 template <typename T>
 btree<T>::~btree() {
-
+  for (auto it = root.elements.begin(); it != root.elements.end(); ++it) {
+    deleteElement(it->second);
+  }
 }
 
+/*
+ * Helper function: Expands elements left and right childs recursively, calling deleteElement on them.
+ * Deletes all elements from bottom of tree to top.
+*/
+template <typename T>
+void btree<T>::deleteElement(Element& e) {
+  //If left child exists
+  if (e.leftChild != nullptr) {
+    //Expand its elements
+    for (auto it = e.leftChild->elements.begin(); it != e.leftChild->elements.end(); ++it) {
+      deleteElement(it->second);
+    }
+
+    //Delete the left child
+    delete e.leftChild;
+    e.leftChild = nullptr;
+  }
+
+  //If right child exists
+  if (e.rightChild != nullptr) {
+    //Expand its elements
+    for (auto it = e.rightChild->elements.begin(); it != e.rightChild->elements.end(); ++it) {
+      deleteElement(it->second);
+    }
+
+    //Delete the right child
+    delete e.rightChild;
+    e.rightChild = nullptr;
+  }
+}
