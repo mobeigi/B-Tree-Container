@@ -113,6 +113,6 @@ private:
     typename std::map<T, typename btree<T>::Element>::const_iterator&);
 };
 
-#include "btree_iterator.tem"
+#include "btree_iterator.cpp"
 
 #endif

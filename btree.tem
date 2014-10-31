@@ -170,7 +170,7 @@ std::ostream& operator<<(std::ostream& os, const btree<T>& tree) {
 
   //Create childs queue which we will use for the BF traversal
   //This will keep track of which node is next to expand and will be passed by reference
-  std::queue<btree<T>::Node*> childs;
+  std::queue<typename btree<T>::Node*> childs;
 
   //Delegate printing to recursive helper function
   btree<T>::printBTree(os, &tree.root, childs, it->first);
