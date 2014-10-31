@@ -18,9 +18,6 @@
 // we better include the iterator
 #include "btree_iterator.h"
 
-//Namespace
-using std::pair;
-
 // we do this to avoid compiler errors about non-template friends
 // what do we do, remember? :)
 template <typename T> class btree;

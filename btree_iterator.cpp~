@@ -4,6 +4,8 @@
 * Each operation implementation is directly followed by the const equivalent implementation.
 */
 
+#include <queue>
+
 //Operator*
 template <typename T>
 T& btree_iterator<T>::operator*() const {
